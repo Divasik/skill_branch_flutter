@@ -20,9 +20,9 @@ class UserHolder {
   List<User> importUsers(List<String> strUsers) {
     List<User> users = [];
     strUsers.forEach((str) {
-      List<String> tokens = str.split(";");
-      tokens.remove("\"\"\"");
-      User u = User(name: tokens[0], email: tokens[1], phone: tokens[2]);
+      List<String> tokens = str.trim().split("\n");
+      tokens = tokens.map((s) => s.trim().replaceAll(";", "")).toList();
+      User u = User(name: tokens[0].trim(), email: tokens[1].trim(), phone: tokens[2].trim());
       users.add(u);
     });
     return users;

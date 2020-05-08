@@ -64,9 +64,7 @@ class UserHolder {
   }
 
   User findUserInFriends(String fullName, User user) {
-    User targetUser = users.values.firstWhere(
-            (u) => u.name == fullName,
-        orElse: () => null);
+    User targetUser = users[fullName];
 
     if(targetUser == null) {
       throw Exception("User $fullName not registered");
@@ -76,5 +74,7 @@ class UserHolder {
             (u) => u == user,
         orElse: () => throw Exception("${user.login} is not a friend of the login")
     );
+
+    return friend;
   }
 }

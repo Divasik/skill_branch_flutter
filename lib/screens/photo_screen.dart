@@ -65,8 +65,8 @@ class _FullScreenImageState extends State<FullScreenImage> with TickerProviderSt
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 
   @override

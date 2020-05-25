@@ -2,6 +2,7 @@
 
 import 'package:FlutterGalleryApp/res/colors.dart';
 import 'package:FlutterGalleryApp/res/res.dart';
+import 'package:FlutterGalleryApp/screens/photo_screen.dart';
 import 'package:FlutterGalleryApp/widgets/photo.dart';
 import 'package:FlutterGalleryApp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -27,23 +28,36 @@ class _FeedState extends State<Feed> {
       body: ListView.builder(
           itemCount: 10,
           itemBuilder: (BuildContext context, int index) {
-        return Column(children: <Widget>[
-          _buildItem(),
-          Divider(
-            thickness: 2,
-            color: AppColors.mercury,
-          )
-        ],
+        return Column(
+          children: <Widget>[
+            _buildItem(index.toString(), () {
+              Navigator.push( context,
+                  MaterialPageRoute(
+                      builder: (context) => FullScreenImage(
+                        name: 'Dmitriy Panfilov',
+                        userName: '@panfilov_dmitriy',
+                        altDescription: 'This is Flutter dash. I love him :)',
+                        photo: kFlutterDash,
+                        heroTag: index.toString()
+                      )
+                  )
+              );
+            }),
+            Divider(
+              thickness: 2,
+              color: AppColors.mercury,
+            )
+          ],
         );
       }),
     );
   }
 
-  Widget _buildItem() {
+  Widget _buildItem(String tag, VoidCallback onTap) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Photo(photoLink: kFlutterDash),
+        Photo(photoLink: kFlutterDash, tag: tag, onTap: onTap),
         _buildPhotoMeta(),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),

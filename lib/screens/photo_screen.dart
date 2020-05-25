@@ -5,12 +5,19 @@ import 'package:flutter/material.dart';
 
 class FullScreenImage extends StatefulWidget {
 
-  FullScreenImage({Key key, this.name = "", this.userName = "", this.altDescription = "", this.photo = ""}): super(key: key);
+  FullScreenImage({Key key,
+    this.name = "",
+    this.userName = "",
+    this.altDescription = "",
+    this.photo = "",
+    this.heroTag = ""
+  }): super(key: key);
 
   final String name;
   final String userName;
   final String altDescription;
   final String photo;
+  final String heroTag;
 
   @override
   State<StatefulWidget> createState() {
@@ -19,7 +26,47 @@ class FullScreenImage extends StatefulWidget {
 
 }
 
-class _FullScreenImageState extends State<FullScreenImage> {
+class _FullScreenImageState extends State<FullScreenImage> with TickerProviderStateMixin {
+
+  AnimationController _controller;
+  Animation<double> _avatarOpacity;
+  Animation<double> _textOpacity;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+        duration: const Duration(milliseconds: 1500),
+        vsync: this
+    );
+
+    _avatarOpacity = Tween<double>(begin: 0, end: 1)
+        .animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Interval(0, 0.5, curve: Curves.ease),
+      ),
+    );
+
+    _textOpacity = Tween<double>(begin: 0, end: 1)
+        .animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Interval(0.5, 1, curve: Curves.ease),
+      ),
+    );
+
+    _controller.forward();
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,17 +76,17 @@ class _FullScreenImageState extends State<FullScreenImage> {
       ),
       body: Column(
         children: <Widget>[
-          _buildItem()
+          _buildItem(context)
         ],
       ),
     );
   }
 
-  Widget _buildItem() {
+  Widget _buildItem(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Photo(photoLink: widget.photo),
+        Photo(photoLink: widget.photo, tag: widget.heroTag),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Text(
@@ -47,7 +94,7 @@ class _FullScreenImageState extends State<FullScreenImage> {
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: AppStyles.h3.copyWith(color: AppColors.black)),),
-        _buildPhotoMeta(),
+        _buildPhotoMeta()
       ],
     );
   }
@@ -57,19 +104,9 @@ class _FullScreenImageState extends State<FullScreenImage> {
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              UserAvatar(avatarLink: 'https://avatars2.githubusercontent.com/u/3737842?s=460&u=08ee3419c049073a924f2255fc08667430651f55&v=4'),
-              SizedBox(width: 6),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(widget.name, style: AppStyles.h1Black),
-                  Text("@${widget.userName}", style: AppStyles.h5Black.copyWith(color: AppColors.manatee)),
-                ],
-              )
-            ],
+          AnimatedBuilder(
+            builder: _buildUserRow,
+            animation: _controller,
           ),
           SizedBox(height: 16),
           Row(
@@ -96,6 +133,29 @@ class _FullScreenImageState extends State<FullScreenImage> {
           )
         ],
       ),
+    );
+  }
+
+  Widget _buildUserRow(BuildContext context, Widget child) {
+    return Row(
+      children: <Widget>[
+        FadeTransition(
+          child: UserAvatar(avatarLink: 'https://avatars2.githubusercontent.com/u/3737842?s=460&u=08ee3419c049073a924f2255fc08667430651f55&v=4'),
+          opacity: _avatarOpacity,
+        ),
+        SizedBox(width: 6),
+        FadeTransition(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(widget.name, style: AppStyles.h1Black),
+              Text("@${widget.userName}", style: AppStyles.h5Black.copyWith(color: AppColors.manatee)),
+            ],
+          ),
+          opacity: _textOpacity,
+        )
+      ],
     );
   }
 }

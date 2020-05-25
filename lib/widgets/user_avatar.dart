@@ -13,7 +13,7 @@ class UserAvatar extends StatelessWidget {
       borderRadius: BorderRadius.circular(50),
       child: CachedNetworkImage(
         imageUrl: avatarLink, width: 40, height: 40, fit: BoxFit.fill
-      ),
+      )
     );
   }
 }

@@ -8,6 +8,7 @@ class FullScreenImage extends StatefulWidget {
   FullScreenImage({Key key,
     this.name = "",
     this.userName = "",
+    this.userPhoto = "",
     this.altDescription = "",
     this.photo = "",
     this.heroTag = ""
@@ -15,6 +16,7 @@ class FullScreenImage extends StatefulWidget {
 
   final String name;
   final String userName;
+  final String userPhoto;
   final String altDescription;
   final String photo;
   final String heroTag;
@@ -140,7 +142,7 @@ class _FullScreenImageState extends State<FullScreenImage> with TickerProviderSt
     return Row(
       children: <Widget>[
         FadeTransition(
-          child: UserAvatar(avatarLink: 'https://avatars2.githubusercontent.com/u/3737842?s=460&u=08ee3419c049073a924f2255fc08667430651f55&v=4'),
+          child: UserAvatar(avatarLink: widget.userPhoto),
           opacity: _avatarOpacity,
         ),
         SizedBox(width: 6),

@@ -36,6 +36,7 @@ class _FeedState extends State<Feed> {
                       builder: (context) => FullScreenImage(
                         name: 'Dmitriy Panfilov',
                         userName: '@panfilov_dmitriy',
+                        userPhoto: 'https://avatars2.githubusercontent.com/u/3737842?s=460&u=08ee3419c049073a924f2255fc08667430651f55&v=4',
                         altDescription: 'This is Flutter dash. I love him :)',
                         photo: kFlutterDash,
                         heroTag: index.toString()

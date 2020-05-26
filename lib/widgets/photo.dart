@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 
 class Photo extends StatelessWidget {
 
-  Photo({Key key, this.photoLink, this.tag, this.onTap}) : super(key: key);
+  Photo({Key key, this.photoLink}) : super(key: key);
 
   final String photoLink;
-  final String tag;
-  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -18,20 +16,11 @@ class Photo extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(17)),
         child: Container(
           color: AppColors.grayChateau,
-          child: Hero(
-            tag: tag,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: onTap,
-                child: CachedNetworkImage(
-                  imageUrl: photoLink,
-                  fit: BoxFit.fill,
-                  placeholder: (context, url) => CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                ),
-              ),
-            ),
+          child: CachedNetworkImage(
+            imageUrl: photoLink,
+            fit: BoxFit.fill,
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Icon(Icons.error),
           )
         ),
       ),

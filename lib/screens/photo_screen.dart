@@ -88,7 +88,10 @@ class _FullScreenImageState extends State<FullScreenImage> with TickerProviderSt
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Photo(photoLink: widget.photo, tag: widget.heroTag),
+        Hero(
+          tag: widget.heroTag,
+          child: Photo(photoLink: widget.photo),
+        ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Text(

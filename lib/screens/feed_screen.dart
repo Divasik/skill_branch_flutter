@@ -58,7 +58,13 @@ class _FeedState extends State<Feed> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Photo(photoLink: kFlutterDash, tag: tag, onTap: onTap),
+        GestureDetector(
+          onTap: onTap,
+          child: Hero(
+            tag: tag,
+            child: Photo(photoLink: kFlutterDash),
+          ),
+        ),
         _buildPhotoMeta(),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),

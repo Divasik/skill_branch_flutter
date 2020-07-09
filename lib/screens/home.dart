@@ -8,6 +8,11 @@ import 'package:flutter/services.dart';
 import 'feed_screen.dart';
 
 class Home extends StatefulWidget {
+
+  Home(this.onConnectivityChanged);
+
+  final Stream<ConnectivityResult> onConnectivityChanged;
+
   @override
   State createState() {
     return _HomeState();
@@ -18,7 +23,6 @@ class _HomeState extends State<Home> {
 
   int currentTab = 0;
 
-  final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
   Widget _connectivityErrorOverlayContent;
 
@@ -65,28 +69,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    initConnectivity();
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-  }
-
-  Future<void> initConnectivity() async {
-    ConnectivityResult result;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      result = await _connectivity.checkConnectivity();
-    } on PlatformException catch (e) {
-      print(e.toString());
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) {
-      return Future.value(null);
-    }
-
-    return _updateConnectionStatus(result);
+    _connectivitySubscription = widget.onConnectivityChanged.listen(_updateConnectionStatus);
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {

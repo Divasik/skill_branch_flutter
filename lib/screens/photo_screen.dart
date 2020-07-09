@@ -1,7 +1,9 @@
 import 'package:FlutterGalleryApp/res/res.dart';
+import 'package:FlutterGalleryApp/widgets/claim_bottom_sheet.dart';
 import 'package:FlutterGalleryApp/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 
 class FullScreenImage extends StatefulWidget {
 
@@ -75,6 +77,15 @@ class _FullScreenImageState extends State<FullScreenImage> with TickerProviderSt
       appBar: AppBar(
         leading: IconButton(icon: Icon(CupertinoIcons.back), onPressed: () { Navigator.pop(context, false); },),
         title: Text('Photo'),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.more_vert, color: AppColors.white),
+              onPressed: () {
+                showModalBottomSheet(context: context, builder: (context) {
+                  return ClaimBottomSheet();
+                });
+              })
+        ],
       ),
       body: Column(
         children: <Widget>[
@@ -99,12 +110,12 @@ class _FullScreenImageState extends State<FullScreenImage> with TickerProviderSt
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: AppStyles.h3.copyWith(color: AppColors.black)),),
-        _buildPhotoMeta()
+        _buildPhotoMeta(context)
       ],
     );
   }
 
-  Widget _buildPhotoMeta() {
+  Widget _buildPhotoMeta(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Column(
@@ -124,7 +135,9 @@ class _FullScreenImageState extends State<FullScreenImage> with TickerProviderSt
                   decoration: BoxDecoration(color: AppColors.dodgerBlue, borderRadius: BorderRadius.circular(7)),
                   child: Text('Save', style: AppStyles.h4.copyWith(color: AppColors.white),),
                 ),
-                onTap: () {},
+                onTap: () {
+                  showSaveDialog(context);
+                },
               ),
               GestureDetector(
                 child: Container(
@@ -163,4 +176,27 @@ class _FullScreenImageState extends State<FullScreenImage> with TickerProviderSt
       ],
     );
   }
+
+  void showSaveDialog(BuildContext context) {
+    showDialog(context: context, builder: (context) => AlertDialog(
+      title: Text('Downloading photos'),
+      content: Text('Are you sure you want to upload a photo?'),
+      actions: [
+        FlatButton(
+          child: Text('Download'),
+          onPressed: () {
+            GallerySaver.saveImage(widget.photo);
+            Navigator.pop(context);
+          },
+        ),
+        FlatButton(
+          child: Text('Close'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        )
+      ],
+    ));
+  }
+
 }

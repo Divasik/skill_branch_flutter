@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:FlutterGalleryApp/res/res.dart';
+import 'package:flutter/services.dart';
 
 import 'feed_screen.dart';
 
@@ -13,6 +17,10 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   int currentTab = 0;
+
+  final Connectivity _connectivity = Connectivity();
+  StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  Widget _connectivityErrorOverlayContent;
 
   List<Widget> pages = [
     Feed(),
@@ -52,6 +60,96 @@ class _HomeState extends State<Home> {
               ]),
       body: pages[currentTab],
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initConnectivity();
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  Future<void> initConnectivity() async {
+    ConnectivityResult result;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      result = await _connectivity.checkConnectivity();
+    } on PlatformException catch (e) {
+      print(e.toString());
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    switch (result) {
+      case ConnectivityResult.none:
+        if(_connectivityErrorOverlayContent == null) {
+          _connectivityErrorOverlayContent = Positioned(
+            top: MediaQuery.of(context).viewInsets.top + 50,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                alignment: Alignment.center,
+                width: MediaQuery.of(context).size.width,
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.fromLTRB(16, 10, 16, 10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: AppColors.mercury
+                  ),
+                  child: Text('No internet connection'),
+                ),
+              ),
+            ),
+          );
+        }
+        ConnectivityOverlay().showOverlay(context, _connectivityErrorOverlayContent);
+        break;
+      default:
+        ConnectivityOverlay().removeOverlay(context);
+        break;
+    }
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+}
+
+class ConnectivityOverlay {
+  static final ConnectivityOverlay _singleton = ConnectivityOverlay._internal();
+
+  factory ConnectivityOverlay() {
+    return _singleton;
+  }
+
+  ConnectivityOverlay._internal();
+
+  static OverlayEntry overlayEntry;
+
+  void showOverlay(BuildContext context, Widget child) {
+    overlayEntry = OverlayEntry(builder: (context) => child);
+    Overlay.of(context).insert(overlayEntry);
+  }
+
+  void removeOverlay(BuildContext context) {
+    if(overlayEntry != null) {
+      overlayEntry.remove();
+      overlayEntry = null;
+    }
   }
 }
 

@@ -1,5 +1,5 @@
+import 'package:FlutterGalleryApp/res/res.dart';
 import 'package:FlutterGalleryApp/screens/home.dart';
-import 'package:FlutterGalleryApp/screens/photo_screen.dart';
 import 'package:flutter/material.dart';
 
 const String kFlutterDash =
@@ -14,8 +14,10 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        textTheme: buildAppTextTheme()
       ),
       home: Home(),
       );
   }
+
 }
